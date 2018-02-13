@@ -14,6 +14,10 @@ resource "digitalocean_tag" "docker-host" {
   name = "docker-host"
 }
 
+resource "digitalocean_tag" "staging" {
+  name = "staging"
+}
+
 resource "digitalocean_volume" "staging-storage" {
   region      = "nyc1"
   name        = "staging-storage"
@@ -48,7 +52,8 @@ resource "digitalocean_droplet" "staging-1" {
     "${digitalocean_tag.terraform-managed.id}",
     "${digitalocean_tag.ansible-managed.id}",
     "${digitalocean_tag.ssl-terminator.id}",
-    "${digitalocean_tag.docker-host.id}"
+    "${digitalocean_tag.docker-host.id}",
+    "${digitalocean_tag.staging.id}"
   ]
 
   volume_ids = ["${digitalocean_volume.staging-storage.id}"]

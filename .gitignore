@@ -2,5 +2,7 @@
 *.tfstate
 *.tfstate.backup
 
+backend-config
+
 # Module directory
 .terraform/
