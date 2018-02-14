@@ -5,8 +5,6 @@ variable "pvt_key" {
   default = "~/.ssh/id_rsa"
 }
 
-variable "ssh_fingerprint" {}
-
 variable "do_token" {}
 
 provider "digitalocean" {

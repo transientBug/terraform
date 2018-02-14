@@ -30,7 +30,7 @@ resource "digitalocean_droplet" "staging-1" {
   name = "staging-1"
 
   region = "nyc1"
-  size = "1gb"
+  size = "2gb"
 
   private_networking = true
   ipv6 = true
@@ -38,7 +38,8 @@ resource "digitalocean_droplet" "staging-1" {
   monitoring = true
 
   ssh_keys = [
-    "${var.ssh_fingerprint}"
+    "01:d6:1d:60:80:e9:f9:17:22:16:ca:d3:82:17:b3:28",
+    "69:aa:78:f6:7e:f6:46:de:f7:c1:fb:6f:60:2f:bf:3b"
   ]
 
   connection {
