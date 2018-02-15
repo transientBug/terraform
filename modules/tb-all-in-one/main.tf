@@ -5,7 +5,7 @@ resource "digitalocean_volume" "storage" {
   description = "${var.name} Volume"
 }
 
-resource "digitalocean_droplet" "1" {
+resource "digitalocean_droplet" "droplet-1" {
   image = "ubuntu-16-04-x64"
   name = "${var.name}-1"
 
@@ -26,7 +26,7 @@ resource "digitalocean_droplet" "1" {
     timeout = "2m"
   }
 
-  tags = "${var.tags}"
+  tags = ["${var.tags}"]
 
   volume_ids = ["${digitalocean_volume.storage.id}"]
 
@@ -42,12 +42,12 @@ echo /dev/disk/by-id/scsi-0DO_Volume_${digitalocean_volume.storage.name} /mnt/${
 BASH
 }
 
-resource "digitalocean_floating_ip" "1" {
-  droplet_id = "${digitalocean_droplet.1.id}"
-  region     = "${digitalocean_droplet.1.region}"
+resource "digitalocean_floating_ip" "floating-ip-1" {
+  droplet_id = "${digitalocean_droplet.droplet-1.id}"
+  region     = "${digitalocean_droplet.droplet-1.region}"
 }
 
 resource "digitalocean_domain" "staging" {
   name       = "${var.domain_name}"
-  ip_address = "${digitalocean_floating_ip.1.ip_address}"
+  ip_address = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
 }
