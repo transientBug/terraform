@@ -30,7 +30,7 @@ resource "digitalocean_droplet" "staging-1" {
   name = "staging-1"
 
   region = "nyc1"
-  size = "2gb"
+  size = "s-1vcpu-2gb"
 
   private_networking = true
   ipv6 = true
