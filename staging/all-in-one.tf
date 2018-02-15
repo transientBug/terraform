@@ -45,10 +45,9 @@ module "tb-all-in-one" {
 
   region = "nyc1"
 
-  droplet_size = "s-1vcpu-3gb"
+  droplet_size = "s-1vcpu-2gb"
   volume_size = 10
 
-  pub_key = "~/.ssh/id_rsa.pub"
   pvt_key = "~/.ssh/id_rsa"
 
   ssh_keys = [
