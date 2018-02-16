@@ -40,6 +40,8 @@ resource "digitalocean_tag" "staging" {
 module "tb-all-in-one" {
   source = "../modules/tb-all-in-one"
 
+  ssh_connection_private_key = "~/.ssh/id_rsa"
+
   name = "staging"
   domain_name = "staging.transientbug.ninja"
 
@@ -47,8 +49,6 @@ module "tb-all-in-one" {
 
   droplet_size = "s-1vcpu-2gb"
   volume_size = 10
-
-  pvt_key = "~/.ssh/id_rsa"
 
   ssh_keys = [
     "01:d6:1d:60:80:e9:f9:17:22:16:ca:d3:82:17:b3:28",
