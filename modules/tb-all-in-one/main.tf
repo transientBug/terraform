@@ -1,3 +1,11 @@
+data "template_file" "bash_startup" {
+  template = "${file("${path.module}/user_data.sh")}"
+
+  vars {
+    name = "${digitalocean_volume.storage.name}"
+  }
+}
+
 resource "digitalocean_volume" "storage" {
   region      = "nyc1"
   name        = "storage-${var.name}"
@@ -30,29 +38,7 @@ resource "digitalocean_droplet" "droplet-1" {
 
   volume_ids = ["${digitalocean_volume.storage.id}"]
 
-  user_data = <<BASH
-#!/bin/bash
-set -euo pipefail
-
-# Install basic stuff for ansible
-apt-get update
-apt-get -y install python-simplejson python-pip libpq-dev
-pip install psycopg2
-
-# Setup the DO Volume, formatting it if it is unformatted
-# and then mounting it
-DISK=/dev/disk/by-id/scsi-0DO_Volume_${digitalocean_volume.storage.name}
-MOUNT=/mnt/${digitalocean_volume.storage.name}
-
-DEVICE_FS=`blkid -o value -s TYPE $DISK`
-if [ "`echo -n $DEVICE_FS`" == "" ] ; then
-  mkfs.ext4 -F $DISK
-fi
-
-mkdir -p $MOUNT
-mount -o discard,defaults $DISK $MOUNT
-echo $DISK $MOUNT ext4 defaults,nofail,discard 0 0 | tee -a /etc/fstab
-BASH
+  user_data = "${data.template_file.bash_startup.rendered}"
 }
 
 resource "digitalocean_floating_ip" "floating-ip-1" {
