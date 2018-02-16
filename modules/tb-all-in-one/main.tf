@@ -22,7 +22,7 @@ resource "digitalocean_droplet" "droplet-1" {
   connection {
     user = "root"
     type = "ssh"
-    private_key = "${file(var.pvt_key)}"
+    private_key = "${file(var.shh_connecction_private_key)}"
     timeout = "2m"
   }
 
@@ -32,13 +32,26 @@ resource "digitalocean_droplet" "droplet-1" {
 
   user_data = <<BASH
 #!/bin/bash
-sudo apt-get update
-sudo apt-get -y install python-simplejson python-pip libpq-dev
+set -euo pipefail
+
+# Install basic stuff for ansible
+apt-get update
+apt-get -y install python-simplejson python-pip libpq-dev
 pip install psycopg2
 
-sudo mkdir -p /mnt/${digitalocean_volume.storage.name}
-sudo mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_${digitalocean_volume.storage.name} /mnt/${digitalocean_volume.storage.name}
-echo /dev/disk/by-id/scsi-0DO_Volume_${digitalocean_volume.storage.name} /mnt/${digitalocean_volume.storage.name} ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab
+# Setup the DO Volume, formatting it if it is unformatted
+# and then mounting it
+DISK=/dev/disk/by-id/scsi-0DO_Volume_${digitalocean_volume.storage.name}
+MOUNT=/mnt/${digitalocean_volume.storage.name}
+
+DEVICE_FS=`blkid -o value -s TYPE $DISK`
+if [ "`echo -n $DEVICE_FS`" == "" ] ; then
+  mkfs.ext4 -F $DISK
+fi
+
+mkdir -p $MOUNT
+mount -o discard,defaults $DISK $MOUNT
+echo $DISK $MOUNT ext4 defaults,nofail,discard 0 0 | tee -a /etc/fstab
 BASH
 }
 
@@ -50,4 +63,12 @@ resource "digitalocean_floating_ip" "floating-ip-1" {
 resource "digitalocean_domain" "staging" {
   name       = "${var.domain_name}"
   ip_address = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
+}
+
+resource "digitalocean_record" "staging" {
+  domain = "${digitalocean_domain.staging.name}"
+  type   = "A"
+  name   = "@"
+  value  = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
+  ttl    = 120
 }
