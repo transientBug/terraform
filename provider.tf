@@ -1,14 +1,9 @@
 variable "pub_key" {
   default = "~/.ssh/id_rsa.pub"
 }
+
 variable "pvt_key" {
   default = "~/.ssh/id_rsa"
-}
-
-variable "do_token" {}
-
-provider "digitalocean" {
-  token = "${var.do_token}"
 }
 
 terraform {
@@ -22,4 +17,10 @@ terraform {
     skip_requesting_account_id = true
     skip_metadata_api_check = true
   }
+}
+
+variable "do_token" {}
+
+provider "digitalocean" {
+  token = "${var.do_token}"
 }
