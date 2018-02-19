@@ -20,14 +20,17 @@ echo "Setting up disk mount"
 DISK=/dev/disk/by-id/scsi-0DO_Volume_${name}
 MOUNT=/mnt/${name}
 
-DEVICE_FS=`blkid -o value -s TYPE $DISK`
+echo "Checking disk format"
+# Echo is so we don't exit the script because blkid is stupid and returns
+# exit code 2 when the disk isn't formatted >:(
+DEVICE_FS=`blkid -o value -s TYPE $DISK || echo ""`
 echo "Disk is formatted? $DEVICE_FS"
 if [ "`echo -n $DEVICE_FS`" == "" ] ; then
   echo "Formatting $DISK"
   mkfs.ext4 -F $DISK
 fi
 
-echo "Making mount $MOUINT"
+echo "Making mount $MOUNT"
 mkdir -p $MOUNT
 
 echo "Mounting $DISK"
