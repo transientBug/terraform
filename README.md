@@ -18,3 +18,8 @@ Finally, do something like
 ```
 terraform plan
 ```
+
+User data script logging:
+```
+grep user-data: /var/log/syslog
+```

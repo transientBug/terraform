@@ -46,15 +46,7 @@ resource "digitalocean_floating_ip" "floating-ip-1" {
   region     = "${digitalocean_droplet.droplet-1.region}"
 }
 
-resource "digitalocean_domain" "staging" {
-  name       = "${var.domain_name}"
-  ip_address = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
-}
-
-resource "digitalocean_record" "staging" {
-  domain = "${digitalocean_domain.staging.name}"
-  type   = "A"
-  name   = "@"
-  value  = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
-  ttl    = 120
-}
+#resource "digitalocean_domain" "domain" {
+#  name       = "${var.domain_name}"
+#  ip_address = "${digitalocean_floating_ip.floating-ip-1.ip_address}"
+#}
