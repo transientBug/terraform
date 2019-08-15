@@ -2,6 +2,8 @@
 *.tfstate
 *.tfstate.backup
 
+*.tfplan
+
 backend-config
 
 # Module directory
